@@ -6,13 +6,12 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const mongoDB = require('mongodb');
 
-process.env.MONGO_URI =
-  'mongodb+srv://rjonesy91:Rjwowz!1991@fcc.zypnf.mongodb.net/fcc?retryWrites=true&w=majority';
-
+// MongoDB and Mongoose connect
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+mongoose.set('useFindAndModify', false);
 
 // Database schema
 const issueTrackerSchema = new mongoose.Schema({
