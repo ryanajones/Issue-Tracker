@@ -6,44 +6,6 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const mongoDB = require('mongodb');
 
-// MongoDB and Mongoose connect
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-mongoose.set('useFindAndModify', false);
-
-// Database schema
-const issueTrackerSchema = new mongoose.Schema({
-  issue_title: {
-    type: String,
-    required: true,
-  },
-  issue_text: {
-    type: String,
-    required: true,
-  },
-  created_by: {
-    type: String,
-    required: true,
-  },
-  created_on: {
-    type: String,
-  },
-  updated_on: {
-    type: String,
-  },
-  assigned_to: {
-    type: String,
-  },
-  open: {
-    type: String,
-  },
-  status_text: {
-    type: String,
-  },
-});
-
 const apiRoutes = require('./routes/api.js');
 const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner');
