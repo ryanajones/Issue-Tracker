@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const mongoose = require('mongoose');
 const mongoDB = require('mongodb');
 
@@ -14,11 +15,11 @@ const issuesSchema = new Schema({
   issue_title: { type: String, required: true },
   issue_text: { type: String, required: true },
   created_by: { type: String, required: true },
-  created_on: { type: Date, default: new Date().toUTCString },
-  updated_on: { type: Date, default: new Date().toUTCString },
+  created_on: { type: Date, default: new Date().toUTCString() },
+  updated_on: { type: Date, default: new Date().toUTCString() },
   assigned_to: { type: String, default: '' },
   open: { type: String, required: true, default: true },
-  status_text: { type: String, default: true },
+  status_text: { type: String, default: '' },
 });
 
 const projectSchema = new Schema({
@@ -32,7 +33,6 @@ const projectSchema = new Schema({
 });
 
 const Issues = mongoose.model('issues', issuesSchema);
-
 const Projects = mongoose.model('projects', projectSchema);
 
 module.exports = function (app) {
@@ -41,16 +41,15 @@ module.exports = function (app) {
 
     .get(async function (req, res) {
       const { project } = req.params;
-      try {
-        const findOne = await Projects.findOne({
-          project_name: project,
-        });
 
-        if (findOne) {
-          console.log(findOne.project_name);
-          /*           res.json({
-            findOne,
-          }); */
+      // Find project and display issues.
+      // Create new project if no project found.
+
+      try {
+        const findProject = await Projects.findOne({ project_name: project });
+
+        if (findProject) {
+          res.json({ issues: findProject.issues });
         } else {
           const newProject = new Projects({ project_name: project });
           await newProject.save();
@@ -59,10 +58,57 @@ module.exports = function (app) {
         console.log(err);
       }
     })
+    /*             Projects.findOne({ project_name: project })
+                  .populate('issues')
+                  .exec(function (err, proj) {
+                    if (err) return console.log(err);
+                    console.log(proj);
+                  }); */
 
     .post(function (req, res) {
       const { project } = req.params;
-      console.log(project.data);
+      const {
+        issue_title,
+        issue_text,
+        created_by,
+        assigned_to,
+        status_text,
+      } = req.body;
+
+      const findProject = Projects.findOne(
+        { project_name: project },
+        (err, foundProj) => {
+          const newIssue = {
+            issue_title,
+            issue_text,
+            created_by,
+            assigned_to,
+            status_text,
+          };
+          if (foundProj) {
+            Issues.create(newIssue, (err, issue) => {
+              if (err) return console.log(err);
+              foundProj.issues.push(issue);
+              foundProj.save((err, savedProj) => {
+                if (err) return console.log(err);
+                return res.json(issue);
+              });
+            });
+          } else {
+            Projects.create({ project_name: project }, (err, newProj) => {
+              if (err) return console.log(err);
+              Issues.create(newIssue, (err, issue) => {
+                if (err) return console.log(err);
+                newProj.issues.push(issue);
+                newProj.save((err, savedProj) => {
+                  if (err) return console.log(err);
+                  return res.json(issue);
+                });
+              });
+            });
+          }
+        }
+      );
     })
 
     .put(function (req, res) {
