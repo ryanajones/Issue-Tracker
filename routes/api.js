@@ -8,7 +8,7 @@ mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
 });
 
-// Database schema
+// Database schemas
 const { Schema } = mongoose;
 
 const issuesSchema = new Schema({
@@ -39,32 +39,47 @@ module.exports = function (app) {
   app
     .route('/api/issues/:project')
 
-    .get(async function (req, res) {
+    // Handle GET request to receive JSON response of project specific
+    // issues. Make a new project if project route parameter doesn't
+    // match any project name in database
+
+    .get(function (req, res) {
       const { project } = req.params;
+      const {
+        issue_title,
+        issue_text,
+        created_by,
+        assigned_to,
+        status_text,
+      } = req.query;
 
-      // Find project and display issues.
-      // Create new project if no project found.
-
-      try {
-        const findProject = await Projects.findOne({ project_name: project });
-
-        if (findProject) {
-          res.json({ issues: findProject.issues });
-        } else {
-          const newProject = new Projects({ project_name: project });
-          await newProject.save();
-        }
-      } catch (err) {
-        console.log(err);
-      }
+      // Find project and populate issues
+      Projects.findOne({ project_name: project })
+        .populate('issues')
+        .exec(function (err, proj) {
+          if (err) return console.log(err);
+          // If no query parameters and no project found, make a new project
+          if (Object.keys(req.query).length === 0) {
+            if (proj == null) {
+              Projects.create({ project_name: project }, (err, newProj) => {
+                if (err) return console.log(err);
+                return res.json(newProj.issues);
+              });
+            }
+            if (proj) return res.json(proj.issues);
+          } else {
+            // Match query keys to project issues and filter to show matches
+            Object.keys(req.query).forEach((key) => {
+              proj.issues = proj.issues.filter(
+                (issue) => issue[key] === req.query[key]
+              );
+            });
+            return res.json(proj.issues);
+          }
+        });
     })
-    /*             Projects.findOne({ project_name: project })
-                  .populate('issues')
-                  .exec(function (err, proj) {
-                    if (err) return console.log(err);
-                    console.log(proj);
-                  }); */
 
+    // Handle POST request to make new issue for projct
     .post(function (req, res) {
       const { project } = req.params;
       const {
@@ -85,6 +100,7 @@ module.exports = function (app) {
             assigned_to,
             status_text,
           };
+          // If project is found, push new issue to project issues array
           if (foundProj) {
             Issues.create(newIssue, (err, issue) => {
               if (err) return console.log(err);
@@ -95,6 +111,7 @@ module.exports = function (app) {
               });
             });
           } else {
+            // If project is not found, make new project and push new issue
             Projects.create({ project_name: project }, (err, newProj) => {
               if (err) return console.log(err);
               Issues.create(newIssue, (err, issue) => {
@@ -111,11 +128,48 @@ module.exports = function (app) {
       );
     })
 
+    // Handle PUT request to update issue for specific project
     .put(function (req, res) {
       const { project } = req.params;
+      const { _id } = req.body;
+      // Create object with updated key value pairs from request body
+      const updatedObj = {};
+      Object.keys(req.body).forEach((key) => {
+        if (req.body[key] !== '') {
+          updatedObj[key] = req.body[key];
+        }
+      });
+      if (!_id) {
+        return jres.json({ error: 'missing _id' });
+      }
+      if (Object.keys(updatedObj).length < 2) {
+        return res.json({ error: 'No updated field(s) sent', _id });
+      }
+      Issues.findByIdAndUpdate(
+        _id,
+        updatedObj,
+        { new: true },
+        (err, updatedIssue) => {
+          if (updatedIssue) {
+            return res.json({ result: 'Succesfully Updated', _id });
+          }
+          return res.json({ error: 'Could not update', _id });
+        }
+      );
     })
 
+    // Handle DELETE request to delete issue for specific project
     .delete(function (req, res) {
       const { project } = req.params;
+      const { _id } = req.body;
+      if (!_id) {
+        return res.json({ error: 'missing _id' });
+      }
+      Issues.findByIdAndDelete(_id, (err, deletedIssue) => {
+        if (deletedIssue) {
+          return res.json({ result: 'Succesfully Deleted' });
+        }
+        return res.json({ error: 'Could not delete', _id });
+      });
     });
 };
