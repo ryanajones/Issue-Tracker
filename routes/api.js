@@ -40,8 +40,8 @@ module.exports = function (app) {
     .route('/api/issues/:project')
 
     // Handle GET request to receive JSON response of project specific
-    // issues. Make a new project if project route parameter doesn't
-    // match any project name in database
+    // issues. If project route parameter doesn't
+    // match any project name in database, then make a new project
 
     .get(function (req, res) {
       const { project } = req.params;
@@ -165,6 +165,15 @@ module.exports = function (app) {
       if (!_id) {
         return res.json({ error: 'missing _id' });
       }
+      // Delete reference id object of issue in projects model
+      Projects.findOne({ project_name: project }, (err, foundProj) => {
+        console.log(foundProj);
+        if (err) return console.log(err);
+        console.log(foundProj.issues._id);
+        foundProj.issues.remove(_id);
+        foundProj.save();
+      });
+      // Delete corresponding issue from issues model
       Issues.findByIdAndDelete(_id, (err, deletedIssue) => {
         if (deletedIssue) {
           return res.json({ result: 'Succesfully Deleted' });
