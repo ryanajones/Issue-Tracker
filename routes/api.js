@@ -167,9 +167,7 @@ module.exports = function (app) {
       }
       // Delete reference id object of issue in projects model
       Projects.findOne({ project_name: project }, (err, foundProj) => {
-        console.log(foundProj);
         if (err) return console.log(err);
-        console.log(foundProj.issues._id);
         foundProj.issues.remove(_id);
         foundProj.save();
       });

@@ -50,7 +50,7 @@
           data.forEach(function (ele) {
             console.log(ele);
             let openstatus;
-            (ele.open === true) ? openstatus = 'open' : openstatus = 'closed';
+            (ele.open === "true") ? openstatus = 'open' : openstatus = 'false';
             let single = [
               '<div class="issue ' + openstatus + '">',
               '<p class="id">id: ' + ele._id + '</p>',
