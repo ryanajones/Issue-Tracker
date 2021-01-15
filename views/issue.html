@@ -81,7 +81,6 @@
           success: function (data) { window.location.reload(true); }
         });
       });
-
       $('#issueDisplay').on('click', '.closeIssue', function (e) {
         let url = "/api/issues/" + currentProject;
         $.ajax({

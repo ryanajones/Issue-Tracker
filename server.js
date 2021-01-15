@@ -35,6 +35,8 @@ fccTestingRoutes(app);
 // Routing for API
 apiRoutes(app);
 
+mongoose.set('useFindAndModify', false);
+
 // 404 Not Found Middleware
 app.use(function (req, res, next) {
   res.status(404).type('text').send('Not Found');

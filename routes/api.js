@@ -90,6 +90,11 @@ module.exports = function (app) {
         status_text,
       } = req.body;
 
+      // If required fields are missing return JSON error
+      if (!issue_title || !issue_text || !created_by) {
+        return res.json({ error: 'required field(s) missing' });
+      }
+
       const findProject = Projects.findOne(
         { project_name: project },
         (err, foundProj) => {
@@ -140,7 +145,7 @@ module.exports = function (app) {
         }
       });
       if (!_id) {
-        return jres.json({ error: 'missing _id' });
+        return res.json({ error: 'missing _id' });
       }
       if (Object.keys(updatedObj).length < 2) {
         return res.json({ error: 'No updated field(s) sent', _id });
@@ -151,7 +156,7 @@ module.exports = function (app) {
         { new: true },
         (err, updatedIssue) => {
           if (updatedIssue) {
-            return res.json({ result: 'Succesfully Updated', _id });
+            return res.json({ result: 'Successfully Updated', _id });
           }
           return res.json({ error: 'Could not update', _id });
         }
@@ -174,7 +179,7 @@ module.exports = function (app) {
       // Delete corresponding issue from issues model
       Issues.findByIdAndDelete(_id, (err, deletedIssue) => {
         if (deletedIssue) {
-          return res.json({ result: 'Succesfully Deleted' });
+          return res.json({ result: 'Successfully Deleted', _id });
         }
         return res.json({ error: 'Could not delete', _id });
       });
