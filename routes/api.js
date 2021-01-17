@@ -148,7 +148,7 @@ module.exports = function (app) {
         return res.json({ error: 'missing _id' });
       }
       if (Object.keys(updatedObj).length < 2) {
-        return res.json({ error: 'No updated field(s) sent', _id });
+        return res.json({ error: 'no updated field(s) sent', _id });
       }
       Issues.findByIdAndUpdate(
         _id,
@@ -156,9 +156,9 @@ module.exports = function (app) {
         { new: true },
         (err, updatedIssue) => {
           if (updatedIssue) {
-            return res.json({ result: 'Successfully Updated', _id });
+            return res.json({ result: 'successfully updated', _id });
           }
-          return res.json({ error: 'Could not update', _id });
+          return res.json({ error: 'could not update', _id });
         }
       );
     })
@@ -179,9 +179,9 @@ module.exports = function (app) {
       // Delete corresponding issue from issues model
       Issues.findByIdAndDelete(_id, (err, deletedIssue) => {
         if (deletedIssue) {
-          return res.json({ result: 'Successfully Deleted', _id });
+          return res.json({ result: 'successfully deleted', _id });
         }
-        return res.json({ error: 'Could not delete', _id });
+        return res.json({ error: 'could not delete', _id });
       });
     });
 };

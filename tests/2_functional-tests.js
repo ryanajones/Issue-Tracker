@@ -11,6 +11,7 @@ chai.use(chaiHttp);
 
 suite('Functional Tests', function () {
   suite('Routing Tests', function () {
+    // POST tests
     suite('POST /api/issues/{project}', function () {
       test('Create an issue with every field', function (done) {
         chai
@@ -99,7 +100,7 @@ suite('Functional Tests', function () {
           });
       });
     });
-
+    // GET tests
     suite('GET /api/issues/{project}', function () {
       test('View issues on a project', function (done) {
         chai
@@ -126,11 +127,11 @@ suite('Functional Tests', function () {
         chai
           .request(server)
           .get('/api/issues/project')
-          .query({ issue_title: 'One Filter' })
+          .query({ created_by: 'Ryan Jones' })
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.isArray(res.body);
-            assert.equal(res.body[0].issue_title, 'One Filter');
+            assert.equal(res.body[0].created_by, 'Ryan Jones');
             assert.property(res.body[0], '_id');
             assert.property(res.body[0], 'created_on');
             assert.property(res.body[0], 'updated_on');
@@ -149,17 +150,14 @@ suite('Functional Tests', function () {
           .request(server)
           .get('/api/issues/project')
           .query({
-            issue_title: 'Multiple Filters',
-            issue_text: 'this is a test for multiple filters',
+            created_by: 'Ryan Jones',
+            assigned_to: 'Alan Jones',
           })
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.isArray(res.body);
-            assert.equal(res.body[0].issue_title, 'Multiple Filters');
-            assert.equal(
-              res.body[0].issue_text,
-              'this is a test for multiple filters'
-            );
+            assert.equal(res.body[0].created_by, 'Ryan Jones');
+            assert.equal(res.body[0].assigned_to, 'Alan Jones');
             assert.property(res.body[0], '_id');
             assert.property(res.body[0], 'created_on');
             assert.property(res.body[0], 'updated_on');
@@ -173,9 +171,9 @@ suite('Functional Tests', function () {
           });
       });
     });
-
+    // PUT tests
     suite('PUT /api/issues/{project}', function () {
-      test('Update one field on an issue => { result: "Successfully Updated" }', function (done) {
+      test('Update one field on an issue => { result: "successfully updated" }', function (done) {
         chai
           .request(server)
           .put('/api/issues/project')
@@ -185,13 +183,13 @@ suite('Functional Tests', function () {
           })
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.deepEqual(res.body.result, 'Successfully Updated');
+            assert.deepEqual(res.body.result, 'successfully updated');
             assert.deepEqual(res.body._id, id);
             done();
           });
       });
 
-      test('Update multiple fields on an issue => { result: "Successfully Updated" }', function (done) {
+      test('Update multiple fields on an issue => { result: "successfully updated" }', function (done) {
         chai
           .request(server)
           .put('/api/issues/project')
@@ -202,7 +200,7 @@ suite('Functional Tests', function () {
           })
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.deepEqual(res.body.result, 'Successfully Updated');
+            assert.deepEqual(res.body.result, 'successfully updated');
             assert.deepEqual(res.body._id, id);
             done();
           });
@@ -220,47 +218,47 @@ suite('Functional Tests', function () {
           });
       });
 
-      test('Update an issue with no fields to update => { error: "No updated field(s) sent" }', function (done) {
+      test('Update an issue with no fields to update => { error: "no updated field(s) sent" }', function (done) {
         chai
           .request(server)
           .put('/api/issues/project')
           .send({ _id: id })
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.equal(res.body.error, 'No updated field(s) sent');
+            assert.equal(res.body.error, 'no updated field(s) sent');
             assert.deepEqual(res.body._id, id);
             done();
           });
       });
 
-      test('Updated an issue with an invalid _id => { error: "Could not update" }', function (done) {
+      test('Updated an issue with an invalid _id => { error: "could not update" }', function (done) {
         chai
           .request(server)
           .put('/api/issues/project')
           .send({ _id: 'wrongid', assigned_to: 'Ry' })
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.equal(res.body.error, 'Could not update');
+            assert.equal(res.body.error, 'could not update');
             done();
           });
       });
     });
-
+    // DELETE tests
     suite('DELETE /api/issues/{project}', function () {
-      test('Delete an issue => { result: "Successfully Deleted" }', function (done) {
+      test('Delete an issue => { result: "successfully deleted" }', function (done) {
         chai
           .request(server)
           .delete('/api/issues/project')
           .send({ _id: id })
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.equal(res.body.result, 'Successfully Deleted');
+            assert.equal(res.body.result, 'successfully deleted');
             assert.equal(res.body._id, id);
             done();
           });
       });
 
-      test('Delete an issue with an invalid _id => { error: "Could not delete" }', function (done) {
+      test('Delete an issue with an invalid _id => { error: "could not delete" }', function (done) {
         const invalidID = '5f665eb46e296f6b9b6a504d';
         chai
           .request(server)
@@ -268,7 +266,7 @@ suite('Functional Tests', function () {
           .send({ _id: invalidID })
           .end(function (err, res) {
             assert.equal(res.status, 200);
-            assert.equal(res.body.error, 'Could not delete');
+            assert.equal(res.body.error, 'could not delete');
             assert.equal(res.body._id, invalidID);
             done();
           });
