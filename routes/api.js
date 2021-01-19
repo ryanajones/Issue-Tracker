@@ -148,8 +148,9 @@ module.exports = function (app) {
         return res.json({ error: 'missing _id' });
       }
       if (Object.keys(updatedObj).length < 2) {
-        return res.json({ error: 'no updated field(s) sent', _id });
+        return res.json({ error: 'no update field(s) sent', _id });
       }
+      updatedObj.updated_on = new Date().toDateString();
       Issues.findByIdAndUpdate(
         _id,
         updatedObj,

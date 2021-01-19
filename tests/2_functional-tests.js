@@ -25,6 +25,10 @@ suite('Functional Tests', function () {
             status_text: 'In QA',
           })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             const {
               _id,
               issue_title,
@@ -64,6 +68,10 @@ suite('Functional Tests', function () {
             created_by: 'Ryan Jones',
           })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             const {
               issue_title,
               issue_text,
@@ -94,6 +102,10 @@ suite('Functional Tests', function () {
           .post('/api/issues/project')
           .send({ issue_title: 'Missing Required Fields Test' })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'required field(s) missing');
             done();
@@ -108,6 +120,10 @@ suite('Functional Tests', function () {
           .get('/api/issues/project')
           .query({})
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.isArray(res.body);
             assert.property(res.body[0], '_id');
@@ -129,6 +145,10 @@ suite('Functional Tests', function () {
           .get('/api/issues/project')
           .query({ created_by: 'Ryan Jones' })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.isArray(res.body);
             assert.equal(res.body[0].created_by, 'Ryan Jones');
@@ -154,6 +174,10 @@ suite('Functional Tests', function () {
             assigned_to: 'Alan Jones',
           })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.isArray(res.body);
             assert.equal(res.body[0].created_by, 'Ryan Jones');
@@ -182,6 +206,10 @@ suite('Functional Tests', function () {
             created_by: 'Ryan Alan Jones',
           })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.deepEqual(res.body.result, 'successfully updated');
             assert.deepEqual(res.body._id, id);
@@ -199,6 +227,10 @@ suite('Functional Tests', function () {
             assigned_to: 'RAJ',
           })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.deepEqual(res.body.result, 'successfully updated');
             assert.deepEqual(res.body._id, id);
@@ -212,6 +244,10 @@ suite('Functional Tests', function () {
           .put('/api/issues/project')
           .send({ created_by: 'Ryan Jones' })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'missing _id');
             done();
@@ -224,8 +260,12 @@ suite('Functional Tests', function () {
           .put('/api/issues/project')
           .send({ _id: id })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
-            assert.equal(res.body.error, 'no updated field(s) sent');
+            assert.equal(res.body.error, 'no update field(s) sent');
             assert.deepEqual(res.body._id, id);
             done();
           });
@@ -235,8 +275,12 @@ suite('Functional Tests', function () {
         chai
           .request(server)
           .put('/api/issues/project')
-          .send({ _id: 'wrongid', assigned_to: 'Ry' })
+          .send({ _id: '5f665eb46e296f6b9b6a504d', assigned_to: 'Ry' })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'could not update');
             done();
@@ -251,6 +295,10 @@ suite('Functional Tests', function () {
           .delete('/api/issues/project')
           .send({ _id: id })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.equal(res.body.result, 'successfully deleted');
             assert.equal(res.body._id, id);
@@ -265,6 +313,10 @@ suite('Functional Tests', function () {
           .delete('/api/issues/project')
           .send({ _id: invalidID })
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'could not delete');
             assert.equal(res.body._id, invalidID);
@@ -278,6 +330,10 @@ suite('Functional Tests', function () {
           .delete('/api/issues/project')
           .send({})
           .end(function (err, res) {
+            if (err) {
+              console.log(err);
+              return done(err);
+            }
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'missing _id');
             done();
