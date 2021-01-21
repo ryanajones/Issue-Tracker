@@ -1,12 +1,19 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 const mongoose = require('mongoose');
-const mongoDB = require('mongodb');
 
 // MongoDB and Mongoose connect
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(
+  process.env.MONGO_URI,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  (err, db) => {
+    if (err) return console.log(err);
+    console.log('Successful database connection.');
+  }
+);
 
 // Database schemas
 const { Schema } = mongoose;
@@ -18,7 +25,7 @@ const issuesSchema = new Schema({
   created_on: { type: Date, default: new Date().toUTCString() },
   updated_on: { type: Date, default: new Date().toUTCString() },
   assigned_to: { type: String, default: '' },
-  open: { type: String, required: true, default: true },
+  open: { type: Boolean, required: true, default: true },
   status_text: { type: String, default: '' },
 });
 
@@ -51,6 +58,7 @@ module.exports = function (app) {
         created_by,
         assigned_to,
         status_text,
+        open,
       } = req.query;
 
       // Find project and populate issues
@@ -71,7 +79,7 @@ module.exports = function (app) {
             // Match query keys to project issues and filter to show matches
             Object.keys(req.query).forEach((key) => {
               proj.issues = proj.issues.filter(
-                (issue) => issue[key] === req.query[key]
+                (issue) => issue[key] == req.query[key]
               );
             });
             return res.json(proj.issues);
@@ -95,42 +103,39 @@ module.exports = function (app) {
         return res.json({ error: 'required field(s) missing' });
       }
 
-      const findProject = Projects.findOne(
-        { project_name: project },
-        (err, foundProj) => {
-          const newIssue = {
-            issue_title,
-            issue_text,
-            created_by,
-            assigned_to,
-            status_text,
-          };
-          // If project is found, push new issue to project issues array
-          if (foundProj) {
+      Projects.findOne({ project_name: project }, (err, foundProj) => {
+        const newIssue = {
+          issue_title,
+          issue_text,
+          created_by,
+          assigned_to,
+          status_text,
+        };
+        // If project is found, push new issue to project issues array
+        if (foundProj) {
+          Issues.create(newIssue, (err, issue) => {
+            if (err) return console.log(err);
+            foundProj.issues.push(issue);
+            foundProj.save((err, savedProj) => {
+              if (err) return console.log(err);
+              return res.json(issue);
+            });
+          });
+        } else {
+          // If project is not found, make new project and push new issue
+          Projects.create({ project_name: project }, (err, newProj) => {
+            if (err) return console.log(err);
             Issues.create(newIssue, (err, issue) => {
               if (err) return console.log(err);
-              foundProj.issues.push(issue);
-              foundProj.save((err, savedProj) => {
+              newProj.issues.push(issue);
+              newProj.save((err, savedProj) => {
                 if (err) return console.log(err);
                 return res.json(issue);
               });
             });
-          } else {
-            // If project is not found, make new project and push new issue
-            Projects.create({ project_name: project }, (err, newProj) => {
-              if (err) return console.log(err);
-              Issues.create(newIssue, (err, issue) => {
-                if (err) return console.log(err);
-                newProj.issues.push(issue);
-                newProj.save((err, savedProj) => {
-                  if (err) return console.log(err);
-                  return res.json(issue);
-                });
-              });
-            });
-          }
+          });
         }
-      );
+      });
     })
 
     // Handle PUT request to update issue for specific project
@@ -150,7 +155,7 @@ module.exports = function (app) {
       if (Object.keys(updatedObj).length < 2) {
         return res.json({ error: 'no update field(s) sent', _id });
       }
-      updatedObj.updated_on = new Date().toDateString();
+      updatedObj.updated_on = new Date().toUTCString();
       Issues.findByIdAndUpdate(
         _id,
         updatedObj,

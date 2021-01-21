@@ -39,7 +39,7 @@
     integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"></script>
   <script>
     $(function () {
-      let currentProject = window.location.pathname.replace(/\//g, "");
+      let currentProject = window.location.pathname.replace(/\//g, "");;
       let url = "/api/issues/" + currentProject;
       $('#projectTitle').text('All issues for: ' + currentProject)
       $.ajax({
@@ -50,7 +50,7 @@
           data.forEach(function (ele) {
             console.log(ele);
             let openstatus;
-            (ele.open === "true") ? openstatus = 'open' : openstatus = 'false';
+            (ele.open) ? openstatus = 'open' : openstatus = 'closed';
             let single = [
               '<div class="issue ' + openstatus + '">',
               '<p class="id">id: ' + ele._id + '</p>',
@@ -81,6 +81,7 @@
           success: function (data) { window.location.reload(true); }
         });
       });
+
       $('#issueDisplay').on('click', '.closeIssue', function (e) {
         let url = "/api/issues/" + currentProject;
         $.ajax({
