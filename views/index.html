@@ -21,11 +21,40 @@
   </header>
   <div id="container">
     <div id="contentGridWrapper">
-      <div id="appExplanation">
+      <section id="getUsageExample" class="boxWrapper">
         <h1>Example GET Usage</h1>
-        
-      </div>
-      <div id="getUsageExample"></div>
+        <pre><code>/api/issues/{project}<br>/api/issues/{project}?open=true&assigned_to=Joe</code></pre>
+        <p>Make a new project by adding /{project} to the end of the URL</p>
+        <ul>
+          <li>http://localhost:3000/projectName</li>
+        </ul>
+      </section>
+      <section id="returnExample" class="boxWrapper">
+        <h1 class="">Example Return</h1>
+        <pre><code>{ 
+  "_id": "5871dda29faedc3491ff93bb",
+  "issue_title": "Fix error in posting data",
+  "issue_text": "When we post data it has an error.",
+  "created_on": "2017-01-08T06:35:14.240Z",
+  "updated_on": "2017-01-08T06:35:14.240Z",
+  "created_by": "Joe",
+  "assigned_to": "Joe",
+  "open": true,
+  "status_text": "In QA"
+},</code></pre>
+      </section>
+      <section id="apiPost" class="boxWrapper">
+        <h1>API Test POST</h1>
+        <p>Submit issue on apitest</p>
+        <form id="testForm" action="">
+          <input type="text" name="issue_title" placeholder="*Title" required=''><br>
+          <textarea type=text name="issue_text" placeholder="*Text" required=''></textarea><br>
+          <input type="text" name="created_by" placeholder="*Created by" required=''><br>
+          <input type="text" name="assigned_to" placeholder="(opt)Assigned to"><br>
+          <input type="text" name="sttus_text" placeholder="(opt)Status text"><br>
+          <button type="submit">Submit Issue</button>
+        </form>
+      </section>
     </div>
   </div>
 </body>
