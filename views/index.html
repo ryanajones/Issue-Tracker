@@ -45,18 +45,86 @@
       </section>
       <section id="apiPost" class="boxWrapper">
         <h1>API Test POST</h1>
+        Go to the project <a href='/api/issues/apitest/'><code>/api/issues/apitest/</code></a>
         <p>Submit issue on apitest</p>
-        <form id="testForm" action="">
+        <form id="testForm">
           <input type="text" name="issue_title" placeholder="*Title" required=''><br>
-          <textarea type=text name="issue_text" placeholder="*Text" required=''></textarea><br>
+          <textarea type=text name="issue_text" placeholder="*Text" required='' style="margin-bottom: 0"></textarea><br>
           <input type="text" name="created_by" placeholder="*Created by" required=''><br>
           <input type="text" name="assigned_to" placeholder="(opt)Assigned to"><br>
           <input type="text" name="sttus_text" placeholder="(opt)Status text"><br>
           <button type="submit">Submit Issue</button>
         </form>
       </section>
+      <section id="apiPut" class="boxWrapper">
+        <h1>API test PUT</h1>
+        <p>Update issue on apitest (Change any or all to update issue on the _id supplied)</p>
+        <form id="testForm2">
+          <input type="text" name="_id" placeholder="*_id" required=''><br>
+          <input type="text" name="issue_title" placeholder="(opt)Title"><br>
+          <textarea type="text" name="issue_text" placeholder="(opt)Text" style="margin-bottom: 0"></textarea><br>
+          <input type="text" name="created_by" placeholder="(opt)Created by"><br>
+          <input type="text" name="assigned_to" placeholder="(opt)Assigned to"><br>
+          <input type="text" name="status_text" placeholder="(opt)Status text"><br>
+          <label><input style="margin: 5px 5px 5px 0" type="checkbox" name="open" value="false"> Check to close
+            issue</label><br>
+          <button type="submit">Submit Issue</button>
+        </form><br>
+      </section>
+      <section id="apiDelete" class="boxWrapper">
+        <div id="deleteTitleAndForm">
+          <h1>API test DELETE</h1>
+          <form id="testForm3">
+            <input type="text" name="_id" placeholder="_id" required=''><br>
+            <button type="submit">Delete Issue</button>
+          </form>
+        </div>
+        <div id=jsonResponse>
+          <h1>JSON Response</h1>
+          <pre><code id='jsonResult'>{"created_on":"2021-01-29T02:48:11.000Z","updated_on":"2021-01-29T02:48:11.000Z","assigned_to":"","open":true,"status_text":"","_id":"6013779fc4221a4b38bea7ca","issue_title":"Test Issue","issue_text":"This is a test issue on apitest project","created_by":"Ryan Jones","__v":0}</code></pre>
+        </div>
+      </section>
     </div>
   </div>
+  <script src="https://code.jquery.com/jquery-2.2.1.min.js"
+    integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"></script>
+  <script>
+    $(function () {
+      $('#testForm').submit(function (e) {
+        $.ajax({
+          url: '/api/issues/project',
+          type: 'post',
+          data: $('#testForm').serialize(),
+          success: function (data) {
+            $('#jsonResult').text(JSON.stringify(data));
+          }
+        });
+        e.preventDefault();
+      });
+      $('#testForm2').submit(function (e) {
+        $.ajax({
+          url: '/api/issues/project',
+          type: 'put',
+          data: $('#testForm2').serialize(),
+          success: function (data) {
+            $('#jsonResult').text(JSON.stringify(data));
+          }
+        });
+        e.preventDefault();
+      });
+      $('#testForm3').submit(function (e) {
+        $.ajax({
+          url: '/api/issues/project',
+          type: 'delete',
+          data: $('#testForm3').serialize(),
+          success: function (data) {
+            $('#jsonResult').text(JSON.stringify(data));
+          }
+        });
+        e.preventDefault();
+      });
+    });
+  </script>
 </body>
 <!-- 
 <body>
