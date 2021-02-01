@@ -99,11 +99,11 @@ body #container #contentGridWrapper {
   display: grid;
   -ms-grid-columns: 500px 500px;
       grid-template-columns: 500px 500px;
-  -ms-grid-rows: 335px 610px 250px;
-      grid-template-rows: 335px 610px 250px;
+  -ms-grid-rows: 335px 605px 220px 220px;
+      grid-template-rows: 335px 605px 220px 220px;
   width: 1000px;
   height: 800px;
-  margin-top: 30px;
+  margin-top: 20px;
   border-radius: 5px;
   background-color: #faf4e8;
 }
@@ -212,38 +212,31 @@ body #container #contentGridWrapper #apiPut {
   margin: 13px 26px 13px 13px;
 }
 
-body #container #contentGridWrapper #apiDelete {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+body #container #contentGridWrapper #apiPut input[name="status_text"] {
+  margin-bottom: 8px;
+}
+
+body #container #contentGridWrapper #jsonResponse {
   -ms-grid-row: 3;
   -ms-grid-row-span: 1;
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-area: 3 / 1 / 4 / 3;
   margin: 13px 26px 13px 26px;
-}
-
-body #container #contentGridWrapper #apiDelete #deleteTitleAndForm {
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
-}
-
-body #container #contentGridWrapper #apiDelete #deleteTitleAndForm form input {
-  width: 226px;
-}
-
-body #container #contentGridWrapper #apiDelete #jsonResponse {
-  -webkit-box-flex: 4;
-      -ms-flex-positive: 4;
-          flex-grow: 4;
   text-align: center;
+  word-wrap: break-word;
 }
 
-body #container #contentGridWrapper #apiDelete #jsonResponse pre {
-  width: 100px;
-  height: 40px;
-  margin: 5px 0;
+body #container #contentGridWrapper #jsonResponse h1 {
+  margin-bottom: 13px;
 }
-/*# sourceMappingURL=style.css.map */
+
+body #container #contentGridWrapper #apiDelete {
+  -ms-grid-row: 4;
+  -ms-grid-row-span: 1;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 1;
+  grid-area: 4 / 1 / 5 / 2;
+  margin: 13px 26px 13px 26px;
+}
+/*# sourceMappingURL=index.css.map */
