@@ -3,8 +3,6 @@ const bodyParser = require('body-parser');
 const { expect } = require('chai');
 const cors = require('cors');
 require('dotenv').config();
-const mongoose = require('mongoose');
-const mongoDB = require('mongodb');
 
 const apiRoutes = require('./routes/api.js');
 const fccTestingRoutes = require('./routes/fcctesting.js');
@@ -34,8 +32,6 @@ fccTestingRoutes(app);
 
 // Routing for API
 apiRoutes(app);
-
-mongoose.set('useFindAndModify', false);
 
 // 404 Not Found Middleware
 app.use(function (req, res, next) {

@@ -2,6 +2,8 @@
 /* eslint-disable camelcase */
 const mongoose = require('mongoose');
 
+mongoose.set('useFindAndModify', false);
+
 // MongoDB and Mongoose connect
 mongoose.connect(
   process.env.MONGO_URI,
@@ -184,10 +186,10 @@ module.exports = function (app) {
       });
       // Delete corresponding issue from issues model
       Issues.findByIdAndDelete(_id, (err, deletedIssue) => {
-        if (deletedIssue) {
-          return res.json({ result: 'successfully deleted', _id });
+        if (err || !deletedIssue) {
+          return res.json({ error: 'could not delete', _id });
         }
-        return res.json({ error: 'could not delete', _id });
+        return res.json({ result: 'successfully deleted', _id });
       });
     });
 };
