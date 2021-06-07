@@ -51,7 +51,6 @@ module.exports = function (app) {
     // Handle GET request to receive JSON response of project specific
     // issues. If project route parameter doesn't
     // match any project name in database, then make a new project
-
     .get(function (req, res) {
       const { project } = req.params;
       const {
@@ -170,7 +169,6 @@ module.exports = function (app) {
         }
       );
     })
-
     // Handle DELETE request to delete issue for specific project
     .delete(function (req, res) {
       const { project } = req.params;
