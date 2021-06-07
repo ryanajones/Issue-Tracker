@@ -1,6 +1,6 @@
 # Issue Tracker
 
-A CRUD app used as a tool for tracking issues on projects. Node and Express implement a RESTful API to route requests from the front-end jQuery Ajax calls. Mongoose.js is used to communicate with MongoDB to perform CRUD operations on issues and projects. Function testing is done with the Chai and Mocha framework combination.
+A CRUD tool capable of tracking issues on projects. Node and Express implement a RESTful API to route requests from the front-end jQuery Ajax calls. Mongoose.js is used to communicate with MongoDB to perform CRUD operations on issues and projects. Function testing is done with the Chai and Mocha framework combination.
 
 ## Technologies Used
 
